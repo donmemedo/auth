@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
 import jwt
-from config import settings
-from custom_exceptions import BadCredentialsException, UnableCredentialsException
+from src.config import settings
+from src.custom_exceptions import BadCredentialsException, UnableCredentialsException
 
 
 @dataclass

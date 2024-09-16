@@ -1,7 +1,7 @@
 import secure
 import uvicorn
-from config import settings
-from dependencies import validate_token
+from src.config import settings
+from src.dependencies import validate_token
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
