@@ -1,7 +1,7 @@
 import secure
 import uvicorn
 from src.config import settings
-from src.dependencies import validate_token
+from src.dependencies import validate_token,PermissionsValidator
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -58,10 +58,13 @@ def protected():
     return {"text": "This is a protected message."}
 
 
-@app.get("/api/messages/admin", dependencies=[Depends(validate_token)])
+# @app.get("/api/messages/admin", dependencies=[Depends(validate_token)])
+@app.get(
+    "/api/messages/admin",
+    dependencies=[Depends(PermissionsValidator(["read:admin-messages"]))],
+)
 def admin():
     return {"text": "This is an admin message."}
-
 
 if __name__ == "__main__":
     uvicorn.run(
