@@ -1,16 +1,18 @@
-from pydantic import validator
+# from pydantic import field_validator
+from pydantic.v1 import validator
 from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    auth0_audience: str
-    auth0_domain: str
-    client_origin_url: str
-    port: int
-    reload: bool
+    auth0_audience: str = ""
+    auth0_domain: str= ""
+    client_origin_url: str= ""
+    port: int= 80
+    reload: bool= True
 
     @classmethod
     @validator("client_origin_url", "auth0_audience", "auth0_domain")
+    # @field_validator("client_origin_url", "auth0_audience", "auth0_domain")
     def check_not_empty(cls, v):
         assert v != "", f"{v} is not defined"
         return v
@@ -21,3 +23,4 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+print("tt")
