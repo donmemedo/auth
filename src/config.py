@@ -10,12 +10,14 @@ class Settings(BaseSettings):
     auth0_client_id: str= ""
     auth0_client_secret: str= ""
     app_secret_key: str= ""
+    token_client_id: str= ""
+    token_client_secret: str= ""
     port: int= 80
     reload: bool= True
 
     @classmethod
-    @validator("client_origin_url", "auth0_audience", "auth0_domain")
-    # @validator("client_origin_url", "auth0_audience", "auth0_domain","auth0_client_id","auth0_client_secret","app_secret_key")
+    # @validator("client_origin_url", "auth0_audience", "auth0_domain")
+    @validator("client_origin_url", "auth0_audience", "auth0_domain","auth0_client_id","auth0_client_secret","app_secret_key")
     # @field_validator("client_origin_url", "auth0_audience", "auth0_domain")
     def check_not_empty(cls, v):
         assert v != "", f"{v} is not defined"
@@ -27,4 +29,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-print("tt")
