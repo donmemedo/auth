@@ -12,6 +12,8 @@ class Settings(BaseSettings):
     app_secret_key: str= ""
     token_client_id: str= ""
     token_client_secret: str= ""
+    issuer: str= ""
+    audience: str= "aa"
     port: int= 80
     reload: bool= True
 

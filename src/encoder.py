@@ -1,10 +1,13 @@
+import datetime
+from datetime import timezone
+
 import jwt
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
-import time, datetime
-from datetime import timezone
+
 from src.config import settings
+
 payload = {
 
     "exp": datetime.datetime.now(tz=timezone.utc) + datetime.timedelta(seconds=1)
@@ -35,20 +38,35 @@ def encoder(msg, private, password=None):
         private = serialization.load_pem_private_key(
             private, password=password, backend=default_backend()
         )
-    encoded = jwt.encode(msg, private, algorithm="RS256",headers={"kid": "230498151c214b788dd97f22b85410a5"})
+    encoded = jwt.encode(msg, private, algorithm="RS256", headers={"kid": "230498151c214b788dd97f22b85410a5"})
     return encoded
 
 
 def decoder(token, public):
-    repo = jwt.decode(token, public, algorithms=["RS256"])
-    return repo
+    try:
+        repo = jwt.decode(token, public, issuer=settings.issuer, audience=settings.audience, algorithms=["RS256"],
+                      options={"require": ["exp", "nbf","iss","aud","iat", "sub","scope","permissions","gty"]})
+        return repo
+    except jwt.exceptions.ExpiredSignatureError:
+        return False
+    # except jwt.exceptions.InvalidTokenError:
+    #     return False
+    except jwt.exceptions.InvalidAudienceError:
+        return False
+    except jwt.exceptions.InvalidIssuerError:
+        return False
+    except jwt.exceptions.InvalidIssuedAtError:
+        return False
+    except jwt.exceptions.MissingRequiredClaimError as e:
+        return e
+
 
 
 password = b"your-password"
 message = {
-    "iss": "https://dev-6xmc0wvr3fm7mau6.us.auth0.com/",
+    "iss": settings.issuer,
     "sub": "RquTDGxqtYFlyBVSbl1JsXG95bmb5CVa@clients",
-    # "aud": "https://donmemedo-simple-auth",
+    "aud": settings.audience,
     "iat": datetime.datetime.now(tz=timezone.utc),
     "exp": datetime.datetime.now(tz=timezone.utc) + datetime.timedelta(seconds=100),
     "nbf": datetime.datetime.now(tz=timezone.utc) - datetime.timedelta(seconds=1),
