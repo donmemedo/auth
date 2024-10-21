@@ -2,10 +2,12 @@ import secure
 import uvicorn
 from src.config import settings
 from src.dependencies import validate_token,PermissionsValidator
+from src.encoder import encoder,decoder
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
+
 
 
 app = FastAPI(docs_url="/docs")
@@ -66,6 +68,17 @@ def public():
 
 @app.get("/api/messages/protected", dependencies=[Depends(validate_token)])
 def protected():
+    return {"text": "This is a protected message."}
+
+
+@app.get("/api/login", dependencies=[Depends(decoder)])
+def protected():
+    return {"text": "This is a protected message."}
+
+
+# @app.get("/api/messages/admin", dependencies=[Depends(validate_token)])
+@app.get("/api/token", dependencies=[Depends(encoder)])
+def give_token():
     return {"text": "This is a protected message."}
 
 

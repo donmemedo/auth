@@ -42,15 +42,15 @@ def encoder(msg, private, password=None):
     return encoded
 
 
-def decoder(token, public):
+def decoder(token, public=None):
+    if not public:
+        public=public_key
     try:
         repo = jwt.decode(token, public, issuer=settings.issuer, audience=settings.audience, algorithms=["RS256"],
                       options={"require": ["exp", "nbf","iss","aud","iat", "sub","scope","permissions","gty"]})
         return repo
     except jwt.exceptions.ExpiredSignatureError:
         return False
-    # except jwt.exceptions.InvalidTokenError:
-    #     return False
     except jwt.exceptions.InvalidAudienceError:
         return False
     except jwt.exceptions.InvalidIssuerError:
@@ -88,3 +88,4 @@ cc = encoder(message, pem, password=password)
 print(cc)
 print("with password \n")
 print(decoder(cc, public_key))
+print(public_key)
